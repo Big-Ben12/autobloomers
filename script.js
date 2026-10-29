@@ -16,12 +16,12 @@ const finishedRoot=document.querySelector('#finished-gallery');if(finishedVehicl
 
 // Replace sample records with confirmed stock. Set sample:false and supply real photos/details.
 const carsForSale=[
- {id:'SAMPLE-01',title:'2022 Honda Accord',condition:'used',location:'Ghana',sample:true},
- {id:'SAMPLE-02',title:'2023 Toyota RAV4',condition:'used',location:'USA',sample:true},
- {id:'SAMPLE-03',title:'2021 Hyundai Elantra',condition:'repairable',location:'USA',sample:true}
+ {id:'SAMPLE-01',title:'2022 Honda Accord',condition:'used',shippingStatus:'Shipped',sample:true},
+ {id:'SAMPLE-02',title:'2023 Toyota RAV4',condition:'used',shippingStatus:'To be shipped',sample:true},
+ {id:'SAMPLE-03',title:'2021 Hyundai Elantra',condition:'repairable',shippingStatus:'To be shipped',sample:true}
 ];
-const labels={new:'New',used:'Used',repairable:'Repairable'};
-const choices={new:'New vehicle',used:'Clean used vehicle',repairable:'Repairable vehicle'};
+const labels={new:'New',used:'Clean foreign used',repairable:'Repairable'};
+const choices={new:'New vehicle',used:'Clean foreign used vehicle',repairable:'Repairable vehicle'};
 const saleRoot=document.querySelector('#sale-grid'),dialog=document.querySelector('#vehicle-dialog');
 let lastDetailButton;
 function element(tag,className,text){const el=document.createElement(tag);if(className)el.className=className;if(text)el.textContent=text;return el}
@@ -31,9 +31,9 @@ function details(car,button){
  const image=element('img','detail-image');image.src=car.image||'assets/vehicle-placeholder.svg';image.alt=car.image?car.title:'Vehicle photograph not supplied';root.append(image);
  const body=element('div','detail-body');body.append(element('p','sale-tag',car.sample?'Sample listing · Not confirmed stock':'Vehicle details'));
  const title=element('h2','',car.title);title.id='vehicle-title';body.append(title);
- body.append(element('p','detail-summary',car.sample?'This example demonstrates the listing layout. Vehicle availability, location, condition, and specifications must be confirmed by Autobloomers.':car.description||'Contact our team for further information.'));
+ body.append(element('p','detail-summary',car.sample?'This example demonstrates the listing layout. Vehicle availability, shipping status, condition, and specifications must be confirmed by Autobloomers.':car.description||'Contact our team for further information.'));
  const list=element('dl','vehicle-specs');
- for(const [name,value] of [['Location',car.location],['Condition',labels[car.condition]],['Price',car.price],['Mileage',car.mileage],['Transmission',car.transmission],['Fuel type',car.fuel],['Engine',car.engine],['Exterior colour',car.colour],['Stock reference',car.sample?'Sample only':car.id]]){list.append(element('dt','',name),element('dd','',value||'To be confirmed'))}
+ for(const [name,value] of [['Shipping status',car.shippingStatus],['Condition',labels[car.condition]],['Price',car.price],['Mileage',car.mileage],['Transmission',car.transmission],['Fuel type',car.fuel],['Engine',car.engine],['Exterior colour',car.colour],['Stock reference',car.sample?'Sample only':car.id]]){list.append(element('dt','',name),element('dd','',value||'To be confirmed'))}
  body.append(list);
  if(car.condition==='repairable')body.append(element('p','repair-note',car.damage||'Damage details and repair requirements: to be confirmed.'));
  const ask=element('button','button',car.sample?'Ask about a similar car':'Enquire about this car');ask.type='button';ask.addEventListener('click',()=>enquire(car));body.append(ask);root.append(body);dialog.showModal();dialog.scrollTop=0;document.body.classList.add('dialog-open');
@@ -45,7 +45,7 @@ function renderCars(filter='all'){
  saleRoot.replaceChildren();items.forEach(car=>{
  const card=element('article','sale-card'),img=element('img');img.src=car.image||'assets/vehicle-placeholder.svg';img.alt=car.image?car.title:'Vehicle photograph coming soon';img.loading='lazy';card.append(img);
  const body=element('div','sale-card-body');body.append(element('p','sale-tag',car.sample?'Sample listing':'For sale'),element('h3','',car.title));
- const meta=element('div','vehicle-meta');meta.append(element('span','',car.location),element('span','',labels[car.condition]));body.append(meta,element('p','sale-price',car.price||'Price to be confirmed'));
+ const meta=element('div','vehicle-meta');meta.append(element('span','',car.shippingStatus||'Status to be confirmed'),element('span','',labels[car.condition]));body.append(meta,element('p','sale-price',car.price||'Price to be confirmed'));
  const button=element('button','full-details','Full Details');button.type='button';button.setAttribute('aria-label',`Full Details: ${car.title}`);button.addEventListener('click',()=>details(car,button));body.append(button);card.append(body);saleRoot.append(card);
  });document.querySelector('#sale-status').textContent=items.length?`${items.length} vehicle${items.length===1?'':'s'} shown.`:'No vehicles listed in this category yet. Contact us to discuss your preference.';
 }
